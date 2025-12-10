@@ -180,3 +180,180 @@ footer {
 </body>
 </html>
  
+
+<script>
+
+class OptiCommerceAI_Bot {
+
+    constructor(){
+
+        this.chatLog = [];
+
+        this.model = "full-commerce-assistant";
+
+    }
+
+    async respond(message){
+
+        this.chatLog.push({user: message});
+
+        return `
+
+            ${this.generateReply(message)}
+
+        `;
+
+    }
+
+    generateReply(msg){
+
+        msg = msg.toLowerCase();
+
+        /* ===== ORDER SUPPORT ===== */
+
+        if(msg.includes("παραγγελί")||msg.includes("order")||msg.includes("tracking")){
+
+            return "📦 Μπορώ να βοηθήσω με την παραγγελία σου! Δώσε μου αριθμό παραγγελίας για να σου πω status & χρόνο παράδοσης.";
+
+        }
+
+        if(msg.includes("επιστροφ")||msg.includes("return")){
+
+            return "↩ Διαδικασία επιστροφής: Συμπλήρωσε φόρμα, λάβε voucher courier, επιστροφή εντός 7-14 ημερών.";
+
+        }
+
+        /* ===== PRODUCT RECOMMENDER ===== */
+
+        if(msg.includes("τι να πάρω")||msg.includes("προτείνε")||msg.includes("recommend")){
+
+            return "🛒 Πες μου προϋπολογισμό + τι προϊόν ψάχνεις και θα σου βρω 3 ιδανικές επιλογές με link αγοράς.";
+
+        }
+
+        /* ===== UPSELL & SALES ===== */
+
+        if(msg.includes("θέλω")||msg.includes("τιμή")||msg.includes("product")){
+
+            return "✨ Για να σε βοηθήσω καλύτερα πες μου budget, τύπο προϊόντος & αν θες οικονομικό ή premium.";
+
+        }
+
+        /* ===== DEFAULT FALLBACK ===== */
+
+        return "🤖 Είμαι ο AI Commerce Assistant της OptiCommerceAI. Μπορώ να βοηθήσω με παραγγελίες, προτάσεις προϊόντων, αποστολές & επιστροφές — τι θα ήθελες να μάθεις;";
+
+    }
+
+}
+
+/* === UI BUBBLE === */
+
+const style = document.createElement("style");
+
+style.innerHTML = `
+
+#optiBubble {
+
+    position: fixed;
+
+    bottom: 25px;
+
+    right: 25px;
+
+    background:#1D7CFF;
+
+    color:#07172D;
+
+    padding:16px 22px;
+
+    border-radius:50px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+}
+
+#chatBox {
+
+    display:none;
+
+    position: fixed;
+
+    bottom: 90px;
+
+    right: 25px;
+
+    width:300px;
+
+    height:380px;
+
+    background:#0D2544;
+
+    border-radius:10px;
+
+    padding:15px;
+
+    color:#F7F9FC;
+
+    overflow-y:auto;
+
+    font-size:14px;
+
+}
+
+#chatInput {
+
+    position: absolute;
+
+    bottom:10px;
+
+    width:85%;
+
+}
+
+`;
+
+document.head.appendChild(style);
+
+/* === HTML UI === */
+
+document.body.insertAdjacentHTML("beforeend", `
+<div id="optiBubble">Chat AI 💬</div>
+<div id="chatBox">
+<div id="chatLog"></div>
+<input id="chatInput" placeholder="Γράψε μήνυμα...">
+</div>
+
+`);
+
+const bot = new OptiCommerceAI_Bot();
+
+document.getElementById("optiBubble").onclick = () => {
+
+    const box = document.getElementById("chatBox");
+
+    box.style.display = box.style.display==="block" ? "none" : "block";
+
+};
+
+document.getElementById("chatInput").addEventListener("keypress", async(e)=>{
+
+    if(e.key==="Enter"){
+
+        const input = e.target.value;
+
+        document.getElementById("chatLog").innerHTML += `<p><b>Εσύ:</b> ${input}</p>`;
+
+        const r = await bot.respond(input);
+
+        document.getElementById("chatLog").innerHTML += `<p><b>OptiAI:</b> ${r}</p>`;
+
+        e.target.value="";
+
+    }
+
+});
+</script>
+ 
